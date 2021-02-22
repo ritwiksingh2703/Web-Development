@@ -34,6 +34,40 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+function auth(req,res,next){
+     console.log(req.headers);
+     
+     var authHeader=req.headers.authorization;
+     if(!authHeader){
+        var err=new Error('You are not authenticated');
+      
+        res.setHeader('WWW-Authenticate','Basic');
+        res.statusCode=401;
+        return next(err);
+
+      }
+      else{
+        var auth=new Buffer(authHeader.split(' ')[1],'base64').toString().split(':');
+
+        username=auth[0];
+        password=auth[1];
+
+        if(username==='admin' && password==='password'){
+          next();
+        }
+        else{
+          var err=new Error('You are not authenticated');
+      
+          res.setHeader('WWW-Authenticate','Basic');
+          res.status=401;
+          return next(err);
+        }
+      }
+
+
+}
+app.use(auth);
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
@@ -55,7 +89,7 @@ app.use(function(err, req, res, next) {
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
   // render the error page
-  res.status(err.status || 500);
+  res.statusCode(err.status || 500);
   res.render('error');
 });
 
