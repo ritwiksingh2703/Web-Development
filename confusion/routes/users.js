@@ -3,6 +3,7 @@ const mongoose=require('mongoose');
 const bodyParser=require('body-parser');
 var User=require('../models/users');
 var passport=require('passport');
+var authenticate=require('../authentication');
 var router = express.Router();
 router.use(bodyParser.json());
 
@@ -31,9 +32,10 @@ router.post('/signup',function(req,res,next){
 });
 
 router.post('/login',passport.authenticate('local'),(req,res,next) => {
+  var token=authenticate.getToken({_id:req.user._id});
   res.statusCode=200;
   res.setHeader('Content-type','application/json');
-  res.json({success:true,status: 'Logged in successfully'});
+  res.json({success:true,token:token,status: 'Logged in successfully'});
 });
 
 router.get('/logout', (req,res) => {
