@@ -1,6 +1,6 @@
 const express=require('express');
 const bodyParser=require('body-parser');
-
+const cors=require('./cors');
 const uploadRouter=express.Router();
 const authenticate=require('../authentication');
 const multer=require('multer');
@@ -30,21 +30,24 @@ const upload=multer({storage:storage,fileFilter:imageFileFilter})
 uploadRouter.use(bodyParser.json());
 
 uploadRouter.route('/')
+.options(cors.corswithOptions,(req,res) => {
+    res.sendStatus(200);
+})
 
-.get(authenticate.verifyUser,authenticate.verifyAdmin,(req,res,next) =>{
+.get(cors.cors,authenticate.verifyUser,authenticate.verifyAdmin,(req,res,next) =>{
     res.statusCode=403;
     res.end('GET operation not supported');
 })
-.post(authenticate.verifyUser,authenticate.verifyAdmin,upload.single('imageFile'),(req,res) => {
+.post(cors.corswithOptions,authenticate.verifyUser,authenticate.verifyAdmin,upload.single('imageFile'),(req,res) => {
     res.statusCode=200;
     res.setHeader('Content-type','application/json');
     res.json(req.file);
 })
-.put(authenticate.verifyUser,authenticate.verifyAdmin,(req,res,next) =>{
+.put(cors.corswithOptions,authenticate.verifyUser,authenticate.verifyAdmin,(req,res,next) =>{
     res.statusCode=403;
     res.end('PUT operation not supported');
 })
-.delete(authenticate.verifyUser,authenticate.verifyAdmin,(req,res,next) =>{
+.delete(cors.corswithOptions,authenticate.verifyUser,authenticate.verifyAdmin,(req,res,next) =>{
     res.statusCode=403;
     res.end('DELETE operation not supported');
 })
