@@ -15,11 +15,13 @@ var dishRouter=require('./routes/dishRouter');
 var promoRouter=require('./routes/promoRouter');
 var leaderRouter=require('./routes/leaderRouter');
 var uploadRouter=require('./routes/uploadRouter');
+var favouriteRouter=require('./routes/favouriteRouter');
 
 const mongoose=require('mongoose');
 const Dishes=require('./models/dishes');
 const Promotions=require('./models/promotions');
 const Leaders=require('./models/leaders');
+const Favourites=require('./models/favourite')
 const url=config.mongoUrl;
 const connect=mongoose.connect(url)
 connect.then( (db) =>{
@@ -61,6 +63,7 @@ app.use('/dishes',dishRouter);
 
 app.use('/leaders',leaderRouter);
 app.use('/promotions',promoRouter);
+app.use('/favourite',favouriteRouter);
 app.use('/imageUpload',uploadRouter);
 
 
